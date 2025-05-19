@@ -3,7 +3,10 @@ import styled from "styled-components";
 import api from "../services/api";
 import rrwebPlayer from "rrweb-player";
 import "rrweb-player/dist/style.css";
-
+// import ExportVideo from "./ExportWithWebCodes";
+// import ExportVideo from "./ExportWithRRVideo";
+import ExportVideo from "./ExportRecordingToVideo";
+// import { exportVideo } from "@rrweb/rrvideo";
 const PlayerContainer = styled.div`
   padding: 20px;
   background-color: #f5f5f5;
@@ -47,6 +50,10 @@ const Player = ({ sessionId }) => {
       try {
         setLoading(true);
         const sessionData = await api.getSession(sessionId);
+        // console.log(
+        //   "Event types:",
+        //   sessionData?.events.map((e) => e.type)
+        // );
         setSession(sessionData);
         setLoading(false);
       } catch (err) {
@@ -68,6 +75,11 @@ const Player = ({ sessionId }) => {
     if (playerInstanceRef.current) {
       playerInstanceRef.current.pause();
       playerInstanceRef.current = null;
+    }
+
+    // Initialize rrweb-player
+    if (playerRef.current) {
+      playerRef.current.innerHTML = ""; // ⬅️ Thêm dòng này để xóa DOM cũ
     }
 
     // Initialize rrweb-player
@@ -103,17 +115,26 @@ const Player = ({ sessionId }) => {
   if (!session || !session.events || session.events.length === 0) {
     return <div>No recording data available for this session.</div>;
   }
-
   return (
-    <PlayerContainer>
-      <h2>Session Playback</h2>
-      <div>
-        <p>Session ID: {session.sessionId}</p>
-        <p>Recorded on: {new Date(session.startTime).toLocaleString()}</p>
-      </div>
+    <>
+      <PlayerContainer>
+        <h2>Session Playback</h2>
+        <div>
+          <p>Session ID: {session.sessionId}</p>
+          <p>Recorded on: {new Date(session.startTime).toLocaleString()}</p>
+        </div>
 
-      <div ref={playerRef}></div>
-    </PlayerContainer>
+        <div ref={playerRef}></div>
+      </PlayerContainer>
+      {/* Thêm component ExportVideo ở đây */}
+      {session.events.length > 0 && sessionId && (
+        <ExportVideo
+          events={session.events}
+          sessionId={sessionId}
+          disabled={false}
+        />
+      )}
+    </>
   );
 };
 

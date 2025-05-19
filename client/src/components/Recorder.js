@@ -3,7 +3,7 @@ import * as rrweb from "rrweb";
 import { io } from "socket.io-client";
 import api from "../services/api";
 import styled from "styled-components";
-
+import ExportVideo from "../components/ExportRecordingToVideo"; // Import component ExportVideo
 const RecorderContainer = styled.div`
   padding: 20px;
   background-color: #f5f5f5;

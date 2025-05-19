@@ -67,6 +67,7 @@ app.get("/", (req, res) => {
 // API endpoint to start a new recording session
 app.post("/api/sessions/start", async (req, res) => {
   try {
+    console.log("body", req.body);
     const { userId, metadata } = req.body;
     const session = new Session({
       sessionId: new mongoose.Types.ObjectId().toString(),
@@ -74,6 +75,7 @@ app.post("/api/sessions/start", async (req, res) => {
       events: [],
       metadata,
     });
+    console.log("session", session);
     await session.save();
     res.status(201).json({ sessionId: session.sessionId });
   } catch (error) {
